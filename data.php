@@ -8,7 +8,7 @@ $servername="localhost";
        $username="root";
        $password="";
        $dbname="mydb";
-       
+
 
     $conn = new mysqli($servername,$username,$password,$dbname);
  
@@ -16,31 +16,66 @@ $servername="localhost";
     {
         die("connection failed:".$conn->connect_error);
     }
-    
+
+
     if(isset($_POST['add']))
     {
-    	$insert_query="insert into user(Name,Mobile,Email,Address) values('$name','$mobile','$email','$address')";
-    	if($conn->query($insert_query))
-   		{
-	        echo "
-	        <script>
+    	if(strlen($mobile)===10 && is_numeric($mobile))
+    	{
+      	$flag=0;
+      	$select_query="select Mobile from user";
+      	$result=$conn->query($select_query);
+      	while ($row = mysqli_fetch_assoc($result)) 
+      	{
+      		if($row['Mobile']!=$mobile)
+      		{
+      			$flag=1;
+      		}
+      		else
+      		{
+      			$flag=0;
+      			break;
+      		}
+      	}
+      	if($flag==1)
+      	{
 
-	        alert('New record inserted successfully');
-	         window.location.href='index.php';
-	        </script>
-	        ";
+    		$insert_query="insert into user(Name,Mobile,Email,Address) values('$name','$mobile','$email','$address')";
+    		if($conn->query($insert_query))
+   			{
+	        	echo "
+	        	<script>
+
+	       	 	alert('New record inserted successfully');
+	         	window.location.href='index.php';
+	        	</script>
+	        	";
 	       
+	    	}
+	    	else
+	    	{
+	    		echo "
+	        	<script>
+
+	        	alert('can not insert');
+	         	window.location.href='index.php';
+	        	</script>
+	        	";
+	    	}
 	    }
 	    else
 	    {
 	    	echo "
-	        <script>
+	        	<script>
 
-	        alert('can not insert');
-	         window.location.href='index.php';
-	        </script>
-	        ";
+	        	alert('mobile number already registered');
+	         	window.location.href='index.php';
+	        	</script>
+	        	";
 	    }
+		
+		
+    	}
     }
    
     if(isset($_POST['delete']))
